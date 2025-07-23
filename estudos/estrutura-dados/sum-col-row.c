@@ -12,7 +12,7 @@ int main(void) {
             tot += mat[i][j];
         }
     }
-    printf("       Collumn1  Collumn2  Collumn3  Collumn4  Collumn5  SumRow\n");
+    printf("       Collumn0  Collumn1  Collumn2  Collumn3  Collumn4  SumRow\n");
     for(int j = 0; j < 10; j++) {
         printf("Row%2d ", j);
         for(int i = 0; i < 5; i ++) {
