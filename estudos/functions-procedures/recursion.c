@@ -41,6 +41,6 @@ int main(void) {
     printf("\n");
     printUntilN(n);
     printf("\nFactorial of %d: %d\n", n, factorial(n));
-    printf("%d\n", nthNumberFromFibonacciSequence(n));
+    printf("The elemente number %d from Fibonacci sequence is: %d\n", n, nthNumberFromFibonacciSequence(n));
     return 0;
 }
