@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
 
 //recursive procedure that prints numbers from N until 0
 void printUntil0(int n) {
