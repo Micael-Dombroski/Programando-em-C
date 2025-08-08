@@ -13,3 +13,10 @@ do {
 // o retorno esperado deveria ser N, indicando que todas foram
 // preenchidas corretamente
 ```
+* Use a função ```fgets()``` da biblioteca ```string.h``` para ler strings ou então formate o ```scanf()``` para definir o tamanho máximo do input do usuário, por exemplo: ```scanf("%50[^\n]", string)```, desse forma a string terá no máximo 50 letras e a leitura se encerrará ao pressionar ```Enter```.
+* Como criar um struct:
+```
+typedef struct {
+  //Aqui você coloca as variáveis que compõem o struct mas sem inicializar elas.
+} NomeDoStruct;
+```
