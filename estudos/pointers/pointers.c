@@ -27,6 +27,14 @@ void modifyArray(int nums[], int size) {
         and copy the original array's values into it.
     */
 }
+typedef struct {
+    int month, day, year;
+} Date;
+void datePrint(Date *p) {
+    printf("%d/%d/%d\n", p->month, p->day, p->year);
+    //printing the struct variable using a pointer to access it
+    //use '->' to manipulate a struct variable
+}
 int main(void) {
     int age = 12;
     int *p;
@@ -64,5 +72,24 @@ int main(void) {
     printArray(arr, 5);
     //when the function receive an array as an argument the program sends a pointer
     //to that array instead
+    Date date;
+    Date *pDate;
+    pDate = &date;
+    date.day = 29;
+    date.month = 2;
+    date.year = 2021;
+    
+    printf("Date: %p\tpDate: %p\n", &date, pDate);
+    datePrint(pDate);
+    //d is a pointer to pointer to pointer
+    int a = 100, *b, **c, ***d;
+    b = &a;
+    //Pointer to pointer (c points to b)
+    c = &b;
+    printf("Address of 'a': %p\tContent of 'a': %d\n", &a, a);
+    printf("Address of 'b': %p\tContent of 'b' (pointer): %p\n", &b, b);
+    printf("Content pointed to by 'b': %d\n", *b);
+    printf("Address of 'c': %p\tContent of 'c' (pointer to pointer): %p\n", &c, c);
+    printf("Content pointed to by 'c': %p\nContent pointed by the pointer that 'c' points to: %d\n", *c, **c);
     return 0;
 }
