@@ -22,10 +22,32 @@ typedef struct {
 ```
 # Alocação Dinâmica de Memória
 ## Por que dinâmico?
-Porque a memória é alocada em tempo de execução, não de compilação.
+Porque a memória é alocada em tempo de execução, não de compilação (alocação estática).
+## Qual a utilidade?
+É útil quando não sabemos previamente o tamanho do array ou estrutura que será usada, evitando tanto desperdício quanto falta de memória.
 ## Funções
-- ```malloc(quantidade de bytes)```: para alocar uma quantia de bytes de forma dinâmica na memória, a função retorna um endereço para a memória alocada. Retorna um ponteiro ````NULL``` se não conseguir alocar a memória.
-- ```calloc(quantidade de elementos, bytes de 1 elemento)```: funciona da mesma forma que malloc mas não é necessário fazer a conta de bytes necessários com base na quantidade de elementos que quer alocar com o ponteiro. Também retorna um ponteiro ````NULL``` se não conseguir alocar a memória.
+- ```malloc(quantidade de bytes)```: para alocar uma quantia de bytes de forma dinâmica na memória, a função retorna um endereço para a memória alocada. Retorna um ponteiro ```NULL``` se não conseguir alocar a memória. A memória alocada não é inicializada, podendo conter lixo de memória.
+```
+int *v = malloc(10 * sizeof(int));
+if (v == NULL) {
+    printf("Erro de alocação!\n");
+}
+```
+- ```calloc(quantidade de elementos, bytes de 1 elemento)```: funciona da mesma forma que malloc mas não é necessário fazer a conta de bytes necessários com base na quantidade de elementos que quer alocar com o ponteiro. Também retorna um ponteiro ```NULL``` se não conseguir alocar a memória.
+```
+int *v = calloc(10, sizeof(int));
+if (v == NULL) {
+    printf("Erro de alocação!\n");
+}
+```
 - ```realloc(pointeiro, numero de elementos)```: realoca a memória, usado quando se quer aumentar ou diminuir o espaço reservado na memória para um ponteiro.
-- ```free()```:
-Em C os arrays são estáticos: seus tamanhos são fixos durante a compilação, o que pode acarretar em espaço insuficiente ou desperdício de memória.
+```
+int *v = malloc(5 * sizeof(int));
+v = realloc(v, 10 * sizeof(int)); // agora são 10 inteiros
+
+```
+- ```free()```: libera a memória alocada dinamicamente para ser reutilizada pois o sistema não libera automaticamente essa memória quando fora de uso (a menos que o programa termine). É uma boa prática atribuir ```NULL``` ao ponteiro para evitar acessos inválidos.
+```
+free(v);
+v = NULL;
+```
