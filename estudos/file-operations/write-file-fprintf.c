@@ -12,10 +12,10 @@
 */
 void write(char f[]) {
     FILE *file = fopen(f, "a+");
-    char name[100], c;
-    int age, opt, ret = 0;
-    float height;
     if(file) {//check if file was successfully opened
+        char name[100], c;
+        int age, opt, ret = 0;
+        float height;
         do {
             do {
                 printf("Enter your name, age, and height: ");
