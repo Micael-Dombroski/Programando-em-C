@@ -9,6 +9,9 @@
     wb+ -> read and write (delete the content from the file if the file already exist)
     ab+ -> read and write (insert in the end of the file)
 */
+/*
+    using fseek to update data from file throw update_contact function
+*/
 typedef struct {
     char name[50];
     int day, month, year;
@@ -22,7 +25,7 @@ void print(Contact **c, int qtt) {
     printf("\n\tContact Book:\n");
     printf("\t----------------------------------------------------------------\n");
     for (int i = 0; i < qtt; i++) {
-        printf("\tId:%d\tName: %s\tBirthdate: %2d/%2d/%d\n", i+1, c[i]->name, c[i]->month, c[i]->day, c[i]->year);
+        printf("\tID:%d\tBirthdate: %2d/%2d/%4d\tName: %s\n", i+1, c[i]->month, c[i]->day, c[i]->year, c[i]->name);
     }
     printf("\t----------------------------------------------------------------\n");
 }
@@ -43,23 +46,40 @@ int register_contact(Contact **c, int qtt, int size) {
         new->day < 0 || new->day > 31 || 
         new->year < 1900 || new->year > getCurrentYear());
     c[qtt] = new;
-    free(new);
     return 1;
 }
-void update_contact(Contact **c, int qtt, int size) {
-    print(c, qtt);
-    int ret = 0, contactID = 0;
-    char ch;
-    do {
-        printf("\nEnter the contact ID you want to update: ");
-        ret = scanf("%d", &contactID);
-        if(contactID < 1 || contactID > qtt)
-            printf("\n\tInvalid ID!\n");
-        while((ch = getchar()) != '\n');
-    } while(ret != 1 || contactID < 1 || contactID > qtt);
-    register_contact(c, contactID - 1, size);
-    printf("\n\n");
-    print(c, qtt);
+void update_contact(char f[]) {
+    FILE *file = fopen(f, "rb+");
+    if(file) {
+        Contact c;
+        int id, i = 1;
+        printf("\tContact List: \n");
+        printf("\t--------------------------------");
+        while(fread(&c, sizeof(Contact), 1, file)) {
+            printf("ID: %d\tBirthdate: %2d/%2d/%4d\tName: %s\n", i, c.month, c.day, c.year, c.name);
+            i++;
+        }
+        printf("\t--------------------------------");
+        printf("\n\tEnter the contact ID to update: ");
+        scanf("%d", &id);
+        while((getchar()) != '\n');
+        if(id < 1 || id >= i) {
+            printf("\n\tInvalid ID\n");
+            return;
+        }
+        id--;
+        int ret = 0;
+        do {
+            printf("\tEnter the contact name and birthdate (mm dd yyyy): ");
+            ret = scanf("%49[^\n]%d %d %d", c.name, &c.month, &c.day, &c.year);  
+        } while (ret != 4);
+        fseek(file, id * sizeof(Contact), SEEK_SET);
+        //SEEK_SET reuturn the file pointer to the start of file
+        fwrite(&c, sizeof(Contact), 1, file);
+        fclose(file);
+    } else {
+        printf("\n\tFailed to open file!\n");
+    }
 }
 void save(Contact **c, int qtt, char f[]) {
     FILE *file = fopen(f, "wb+");
@@ -98,7 +118,7 @@ int read_file(Contact **c, int size, char f[]) {
 }
 int main(void) {
     Contact *contactBook[50];
-    char fileName[] = "contactBook.dat";
+    char fileName[] = "contactBook2.dat";
     int size = 50, qtt = 0, opt;
     do {
         printf("\n\t0 - Exit\n\t1 - Register\n\t2 - Update\n\t3 - Print\n\t4 - Save\n\t5 - Read File\n");
@@ -114,7 +134,7 @@ int main(void) {
                 qtt += register_contact(contactBook, qtt, size);
                 break;
             case 2:
-                update_contact(contactBook, qtt, size);
+                update_contact(fileName);
                 break;
             case 3:
                 print(contactBook, qtt);
@@ -131,5 +151,8 @@ int main(void) {
                 break;
         }
     } while (opt != 0);
+    for(int i = 0; i < qtt; i++) {
+        free(contactBook[i]);
+    }
     return 0;
 }

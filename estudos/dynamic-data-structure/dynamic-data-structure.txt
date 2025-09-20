@@ -1,0 +1,28 @@
+    // Arrays (and matrices, which are just multi-dimensional arrays) are static structures
+    // because their size is fixed at the time of declaration and cannot grow dynamically.
+    //In a dynamic structure you can increase or decrease their size
+    /*
+        Dynamically allocated elements (e.g., in linked lists) are not stored
+        in contiguous memory like arrays; they can be scattered throughout memory.
+        Don't need one large contiguous block of free memory, each element can be 
+        stored separately and linked with pointers.
+    */
+    /* Some common data structures:
+        - Stack
+        - Queue
+        - Linked List
+        - Tree
+
+        They can often be implemented using dynamic memory (e.g., with pointers),
+        but the main difference between them is their purpose and how they
+        organize and access data.
+    */
+   //Stack have 2 operations, push (insert element on top) and (pop remove element on top)
+   //It follows the LIFO (Last In, First Out) principle
+   //Each node (element) in the stack point to the underneath node
+   /*
+        To pop a node:
+        1. Use an auxiliary pointer to store the current top node.
+        2. Move the stack's top pointer to the next node (the one underneath).
+        3. Free the old top node from memory.
+   */
