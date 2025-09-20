@@ -1,0 +1,10 @@
+/*
+    ADT = Abstract Data Type
+    An ADT is a logical model that defines:
+        - A collection of data (e.g. a stack, queue, or list)
+        - The operations that can be performed on that data 
+          (e.g. push, pop, create_stack, print_stack)
+
+    The actual implementation details are hidden.
+    Data is accessed only through the provided functions.
+*/
