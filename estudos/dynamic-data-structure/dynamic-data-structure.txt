@@ -26,4 +26,5 @@
         2. Move the stack's top pointer to the next node (the one underneath).
         3. Free the old top node from memory.
    */
-   
+   //Queue is similar to a Stack, you can insert and remove elements from it
+   //It follows the FIFO (First In, First Out) principle

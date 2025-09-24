@@ -58,11 +58,16 @@ int indentify_formation(char x[]) {
             print_stack(stack);
         } else if(x[i] == ']' || x[i] == '}' || x[i] == ')') {
             remove = pop(&stack);
-            if(is_pair(x[i], remove -> character == 0)) {
-                printf("\n\tExXPRESSION POORLY FORMED\n");
+            if(remove) {
+                if(is_pair(x[i], remove -> character == 0)) {
+                    printf("\n\tEXPRESSION POORLY FORMED\n");
+                    return 1; //poorly formed
+                }
+                free(remove);
+            } else {
+                printf("\n\tEXPRESSION POORLY FORMED\n");
                 return 1; //poorly formed
             }
-            free(remove);
         }
         i++;
     }
