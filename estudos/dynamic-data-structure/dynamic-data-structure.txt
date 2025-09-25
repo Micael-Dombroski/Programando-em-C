@@ -28,3 +28,6 @@
    */
    //Queue is similar to a Stack, you can insert and remove elements from it
    //It follows the FIFO (First In, First Out) principle
+   //A Priority Queue works like a regular queue, but some elements 
+   //have priority. If a priority element is inserted, it is placed 
+   //ahead of the non-priority elements.
