@@ -66,6 +66,29 @@ void push_between(List *list, int num, int prev) {
         printf("\n\tFailed to allocate memory\n");
     }
 }
+void ordered_push(List *list, int num) {
+    Node *sup, *new = malloc(sizeof(Node));
+    if(new) {
+        new -> value = num;
+        if(list -> start == NULL) {
+            new -> next = NULL;
+            list -> start = new;
+        } else if(new -> value < list -> start -> value) {
+            new -> next = list -> start;
+            list -> start = new;
+        } else {
+            sup = list -> start;
+            while(sup -> next && new -> value > sup -> next -> value) {
+                sup = sup -> next;
+            }
+            new -> next = sup -> next;
+            sup -> next = new;
+        }
+        list -> size++;
+    } else {
+        printf("\n\tFailed to allocate memory\n");
+    }
+}
 void print_list(List list) {
     Node *node = list.start;
     printf("\n\tList size: %d\n\tElements: ", list.size);
@@ -80,11 +103,11 @@ int main(void) {
     List list;
     create_list(&list);
     do {
-        printf("\n\t0 - Exit\n\t1 - Insert at Start\n\t2 - Insert at End\n\t3 - Insert\n\t4 - Print\n\n");
+        printf("\n\t0 - Exit\n\t1 - Insert at Start\n\t2 - Insert at End\n\t3 - Insert\n\t4 - Ordered Insertion\n\t5 - Print\n\n");
         scanf("%d", &opt);
         switch (opt) {
         case 0:
-            printf("Exiting....\n");
+            printf("Exiting...\n");
             break;
         case 1:
             printf("Enter an integer value: ");
@@ -104,6 +127,11 @@ int main(void) {
             push_between(&list, value, prevNum);
             break;
         case 4:
+            printf("Enter an integer value: ");
+            scanf("%d", &value);
+            ordered_push(&list, value);
+            break;
+        case 5:
             print_list(list);
             break;
         default:
