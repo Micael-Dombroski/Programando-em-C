@@ -99,6 +99,17 @@ Node* pop(Node **list, int num) {
 
     return remove;
 }
+Node* search(Node **list, int num) {
+    Node *sup, *node = NULL;
+    sup = *list;
+    while(sup && sup -> value != num) {
+        sup = sup -> next;
+    }
+    if(sup) {
+        node = sup;
+    }
+    return node;
+}
 void print_list(Node *node) {
     printf("\n\tList: ");
     while(node) {
@@ -111,7 +122,7 @@ int main(void) {
     int opt, value, prevNum;
     Node *list = NULL;
     do {
-        printf("\n\t0 - Exit\n\t1 - Insert at Start\n\t2 - Insert at End\n\t3 - Insert\n\t4 - Ordered Insertion\n\t5 - Remove\n\t6 - Print\n\n");
+        printf("\n\t0 - Exit\n\t1 - Insert at Start\n\t2 - Insert at End\n\t3 - Insert\n\t4 - Ordered Insertion\n\t5 - Remove\n\t6 - Search\n\t7 - Print\n\n");
         scanf("%d", &opt);
         switch (opt) {
         case 0:
@@ -151,6 +162,16 @@ int main(void) {
             }
             break;
         case 6:
+            printf("Enter a value to search for: ");
+            scanf("%d", &value);
+            Node *node = search(&list, value);
+            if (node) {
+                printf("The value %d was found\n", node -> value);
+            } else {
+                printf("\n\tThe value wasn't found\n");
+            }
+            break;
+        case 7:
             print_list(list);
             break;
         default:

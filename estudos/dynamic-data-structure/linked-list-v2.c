@@ -89,6 +89,42 @@ void ordered_push(List *list, int num) {
         printf("\n\tFailed to allocate memory\n");
     }
 }
+Node* pop(List *list, int num) {
+    Node *sup, *remove = NULL;
+    if(list -> start) {
+        if(list -> start -> value == num) {
+            remove = list -> start;
+            list -> start = remove -> next;
+            list -> size--;
+        } else {
+            sup = list -> start;
+            while(sup -> next && sup -> next -> value != num) {
+                sup = sup -> next;
+            }
+            if(sup -> next) {
+                remove = sup -> next;
+                sup -> next = remove -> next;
+                list -> size--;
+            }
+        }
+    } else  {
+        printf("\n\tList is empty\n");
+    }
+    return remove;
+}
+Node* search(List *list, int num) {
+    Node *sup, *node = NULL;
+    if(list ->start) {
+        sup = list -> start;
+        while(sup && sup -> value != num) {
+            sup = sup -> next;
+        }
+        if(sup) {
+            node = sup;
+        }
+    }
+    return node;
+}
 void print_list(List list) {
     Node *node = list.start;
     printf("\n\tList size: %d\n\tElements: ", list.size);
@@ -103,7 +139,7 @@ int main(void) {
     List list;
     create_list(&list);
     do {
-        printf("\n\t0 - Exit\n\t1 - Insert at Start\n\t2 - Insert at End\n\t3 - Insert\n\t4 - Ordered Insertion\n\t5 - Print\n\n");
+        printf("\n\t0 - Exit\n\t1 - Insert at Start\n\t2 - Insert at End\n\t3 - Insert\n\t4 - Ordered Insertion\n\t5 - Remove\n\t6 - Search\n\t7 - Print\n\n");
         scanf("%d", &opt);
         switch (opt) {
         case 0:
@@ -132,6 +168,27 @@ int main(void) {
             ordered_push(&list, value);
             break;
         case 5:
+            printf("Enter a value to remove: ");
+            scanf("%d", &value);
+            Node *remove = pop(&list, value);
+            if(remove) {
+                printf("The value %d was removed\n", remove -> value);
+                free(remove);
+            } else {
+                printf("\n\tThe value doesn't exist in the list\n");
+            }
+            break;
+        case 6:
+            printf("Enter a value to search for: ");
+            scanf("%d", &value);
+            Node *node = search(&list, value);
+            if (node) {
+                printf("The value %d was found\n", node -> value);
+            } else {
+                printf("\n\tThe value wasn't found\n");
+            }
+            break;
+        case 7:
             print_list(list);
             break;
         default:
