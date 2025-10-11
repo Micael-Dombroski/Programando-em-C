@@ -46,8 +46,86 @@
     and a low load factor wastes memory with too many empty spaces.
     To balance performance and space, a common load factor is around 0.75.
 */
+#define SIZE 29
+//we're creating a table with 15 elements, the closest
+//prime number to twice the number of elements choosen was 29
+void initializeTable(int t[]) {
+    for(int i = 0; i < SIZE; i++)
+        t[i] = 0;
+}
+int hashFunction(int key) {
+    return key % SIZE;
+}
+void insert(int t[], int value) {
+    int id = hashFunction(value);
+    while(t[id] != 0) {
+        id = hashFunction(id + 1);
+    }
+    t[id] = value;
+}
+int search(int t[], int key) {
+    int id = hashFunction(key);
+    printf("\n\tGenerated index: %d\n", id);
+    while(t[id] != 0) {
+        if(t[id] == key) {
+            return t[id];
+        }
+        id = hashFunction(id + 1);
+    }
+    return 0;
+}
+void print(int t[]) {
+    printf("----Hashtable----\n");
+    printf("[ID] - [KEY]\n");
+    for (int i = 0; i < SIZE; i++) {
+        printf("[%2d] - [%d]\n", i, t[i]);
+    }
+    printf("\n");
+}
 int main (void) {
-
-    
+    int table[SIZE];
+    initializeTable(table);
+    int opt, ret = 0, value;
+    do {
+        printf("HashTable Menu\n");
+        printf("\t0 - Exit\n\t1 - Insert\n\t2 - Search\n\t3 - Print\n");
+        do {
+            printf("Choose an option: ");
+            ret = scanf("%d", &opt);
+            while((getchar()) != '\n');
+        } while (ret != 1);
+        switch (opt) {
+        case 0:
+           printf("\n\tExiting...\n");
+            break;
+        case 1:
+            do {
+                printf("Which value you want to insert? ");
+                ret = scanf("%d", &value);
+                while((getchar()) != '\n');
+            } while (ret != 1);
+            insert(table, value);
+            break;
+        case 2:
+            do {
+                printf("Which value you want to search for? ");
+                ret = scanf("%d", &value);
+                while((getchar()) != '\n');
+            } while (ret != 1);
+            int returnValue = search(table, value);
+            if(returnValue) {
+                printf("\nThe value %d was found\n", returnValue);
+            } else {
+                printf("\n\tThe value wasn't found\n");
+            }
+            break;
+        case 3:
+            print(table);
+            break;
+        default:
+        printf("\n\tInvalid option!\n");
+            break;
+        }
+    } while (opt != 0);
     return EXIT_SUCCESS;
 }

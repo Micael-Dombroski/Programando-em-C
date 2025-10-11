@@ -1,5 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#define SIZE 29
+
 typedef struct {
     int day ,month, year;
 } Date;
@@ -19,14 +22,11 @@ typedef struct {
 
 typedef struct {
     char name[50];
+    int id;
     Date birthdate;
     Address address;
     Contract employContract;
 } Person;
-typedef struct node {
-    Person p;
-    struct node *next;
-} Node;
 
 //Printing data from a Person
 void print_date(Date date) {
@@ -50,6 +50,7 @@ void print_contract(Contract contract) {
 void print_person(Person person) {
     printf("\t======================================\n");
     printf("\tName: %s", person.name);
+    printf("\tCPF: %d\n", person.id);
     printf("\tBirthdate: ");
     print_date(person.birthdate);
     print_address(person.address);
@@ -102,56 +103,69 @@ Person read_person() {
     Person person;
     printf("\nName: ");
     fgets(person.name, 49, stdin);
+    printf("\nID: ");
+    scanf("%d", &person.id);
     printf("\nBirthdate: ");
     person.birthdate = read_date();
     person.employContract = read_contract();
     person.address = read_address();
     return person;
 }
-void push(Node **queue, Person person) {
-    Node *sup, *new = malloc(sizeof(Node));
-    if (new)
-    {
-        new -> p = person;
-        new -> next = NULL;
-        if(*queue) {
-            sup = *queue;
-            while(sup -> next) {
-                sup = sup -> next;
-            }
-            sup -> next = new;
-        } else {
-            *queue = new;
+
+//Functions and procedures for the hash table
+void initializeTable(Person t[]) {
+    for (int i = 0; i < SIZE; i++) {
+        strcpy(t[i].name, "");
+    }
+}
+int hashFunction(int key) {
+    return key % SIZE;
+}
+int stringHashFunction(char str[]) {
+    int sizeS = strlen(str);
+    unsigned int hash = 0;
+    for (int i = 1; i <= sizeS; i++) {
+        hash += str[i] * i;
+    }
+    return hash % SIZE;
+}
+void insert(Person t[]) {
+    Person p = read_person();
+    int id = stringHashFunction(p.name);
+    printf("\nGenerated key: %d\n", id);
+    while(strlen(t[id].name) > 0) {
+        id = hashFunction(id + 1);
+    }
+    t[id] = p;
+}
+Person* search(Person t[], char key[]) {
+    int id = stringHashFunction(key);
+    printf("\nGenerated key: %d\n", id);
+    while(strlen(t[id].name) > 0) {
+        if(strcmp(t[id].name, key) == 0) {
+            return &t[id];
         }
-    } else {
-        printf("\n\tFailed to allocate memory\n");
+        id = hashFunction(id + 1);
     }
+    return NULL;
 }
-Node* pop(Node **queue) {
-    Node *remove = NULL;
-    if(*queue) {
-        remove = *queue;
-        *queue = remove -> next;
-    } else {
-        printf("\n\tQueue is empty\n\n");
+void print(Person t[]) {
+    for (int i = 0; i < SIZE; i++) {
+        printf("Hash Key: %d\n", i);
+        if(strlen(t[i].name) > 0) {
+            print_person(t[i]);
+        }
+        printf("\n-------------------------\n");
     }
-    return remove;
+    printf("\n");
 }
-void print_queue(Node **queue) {
-    printf("\n\tQueue elements:\n");
-    Node *sup = *queue;
-    while(sup) {
-        print_person(sup -> p);
-        sup = sup -> next;
-    }
-    printf("\n\n");
-}
-int main (void) {
-    Node *remove, *queue = NULL;
+int main(void) {
+    Person table[SIZE];
+    initializeTable(table);
     int opt;
-    Person person;
+    char name[50];
     do {
-        printf("\t0 - Exit\n\t1 - Insert\n\t2 - Remove\n\t3 - Print\n");
+        printf("\t0 - Exit\n\t1 - Insert\n\t2 - Search\n\t3 - Print\n");
         scanf("%d", &opt);
         while((getchar()) != '\n');
         switch (opt) {
@@ -159,25 +173,26 @@ int main (void) {
             printf("\n\tExiting...\n");
             break;
         case 1:
-            person = read_person();
-            push(&queue, person);
+            insert(table);
             break;
         case 2:
-            remove = pop(&queue);
-            if(remove) {
-                printf("Information from the removed person: \n");
-                print_person(remove -> p);
-                free(remove);
+            printf("Which name do you want to search for? ");
+            fgets(name, 49, stdin);
+            Person *returnPerson = search(table, name);
+            if(returnPerson) {
+                printf("\nName was found:\n");
+                print_person(*returnPerson);
+            } else {
+                printf("\n\tName was not found\n");
             }
             break;
         case 3:
-            print_queue(&queue);
+            print(table);
             break;
         default:
-        printf("\n\tInvalid option\n\n");
             break;
         }
-    } while(opt != 0);
+    } while (opt != 0);
 
     return EXIT_SUCCESS;
 }
