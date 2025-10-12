@@ -42,4 +42,20 @@
         A Queue restricts access to FIFO (first-in, first-out): 
         you enqueue at the back and dequeue from the front.
    */
+   //Tree: data structure used to ororganize and search data
+   /*
+     There are many kinds of trees for differents types of problems.
+     Examples:
+          - Red-Black Tree
+          - B-Tree
+          - AVL Tree
+          - Binary Tree
+     *What is a binary tree?
+          A binary tree start from root (first element) and then
+          split in 2 branches. Each branch can also split in 2, and 
+          so on. A node with no children (braches) is called a "leaf".
+          In a binary tree, elements that are smaller than the root
+          are placed on the left, and the greater than the root on
+          the right.
+   */
    
