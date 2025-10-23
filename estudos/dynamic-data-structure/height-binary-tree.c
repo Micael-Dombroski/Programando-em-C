@@ -88,19 +88,26 @@ int num_of_leafs(TreeNode *tree) {
     return 0;
 }
 
-TreeNode* remove_leaf(TreeNode *tree, int value) {
+TreeNode* remove_node(TreeNode *tree, int value) {
     if(tree) {
         if(tree -> value == value) {
+            //remove a leaf
             if(tree -> left == NULL && tree -> right == NULL) {
                 free(tree);
                 printf("\n\tRemoved leaf node: %d\n", value);
                 return NULL;
+            //remove a node with 2 children
             } else if(tree -> left != NULL && tree -> right  != NULL) {
-                TreeNode *node = tree -> right;
-                insert(&node, tree -> left -> value);
-                free(tree);
-                printf("\n\tRemoved node with 2 branches: %d\n", value);
-                return node;
+                TreeNode *sup = tree -> right;
+                while(sup -> left) {
+                    sup = sup -> left;
+                }
+                tree -> value= sup -> value;
+                sup -> value = value;
+                printf("Element changed: %d!\n", value);
+                tree -> right = remove_node(tree -> right, value);
+                return tree;
+            //remove a node with 1 child
             } else {
                 TreeNode *node; 
                 if (tree -> right == NULL) {
@@ -109,14 +116,14 @@ TreeNode* remove_leaf(TreeNode *tree, int value) {
                     node = tree -> right;
                 }
                 free(tree);
-                printf("\n\tRemoved node with 1 branche: %d\n", value);
+                printf("\n\tRemoved node with 1 branch: %d\n", value);
                 return node;
             }
         } else {
             if(value < tree -> value) {
-                tree -> left = remove_leaf(tree -> left, value);
+                tree -> left = remove_node(tree -> left, value);
             } else {
-                tree -> right = remove_leaf(tree -> right, value);
+                tree -> right = remove_node(tree -> right, value);
             }
             return tree;
         }
@@ -191,7 +198,7 @@ int main(void) {
             printf("\n\n");
             printf("Enter the node value to remove: ");
             scanf("%d", &value);
-            tree = remove_leaf(tree, value);
+            tree = remove_node(tree, value);
             break;
         default:
             printf("\n\tInvalid option\n");
