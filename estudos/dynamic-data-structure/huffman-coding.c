@@ -24,6 +24,7 @@ typedef struct {
     int size;
 } List;
 
+//frequency table
 void initialize_table_with_zero(unsigned int tab[]) {
     for(int i = 0; i < SIZE; i++) {
         tab[i] = 0;
@@ -45,6 +46,8 @@ void print_frequency_tab(unsigned int tab[]) {
     }
 }
 
+
+//list
 void create_list(List *list) {
     list -> start = NULL;
     list -> size = 0;
@@ -99,10 +102,54 @@ void print_list(List *list) {
     }
 }
 
+//tree
+Node* remove_start_node(List *list) {
+    Node *sup = NULL;
+    if(list -> start) {
+        sup = list -> start;
+        list -> start = sup -> next;
+        list -> size--;
+        sup -> next = NULL;
+    }
+
+    return sup;
+}
+
+Node* build_tree(List *list) {
+    Node *first, *second, *new = NULL;
+    while(list -> size > 1) {
+        first = remove_start_node(list);
+        second = remove_start_node(list);
+        new = malloc(sizeof(Node));
+        if(new) {
+            new -> c = '+';
+            new -> frequency = first -> frequency + second -> frequency;
+            new -> left = first;
+            new -> right = second;
+            new -> next = NULL;
+            ordered_insert(list, new);
+        } else {
+            printf("\n\tFailed to allocate memory on build_tree\n");
+            break;
+        }
+    }
+    return list -> start;
+}
+
+void print_tree(Node *root, int size) {
+    if(!root -> left && !root -> right) {
+        printf("\tLeaf: %c\tHeight: %d\n", root -> c, size);
+    } else {
+        print_tree(root -> left, size + 1);
+        print_tree(root -> right, size +1);
+    }
+}
+
 int main(void) {
     //unsined keyword tells that it can't hold negative values
     unsigned char text[] = {"Vamos aprender a programar"};
     unsigned int frequency_table[SIZE];
+    printf("\n\t-------Frequency Table-------\n");
     initialize_table_with_zero(frequency_table);
     fill_frequency_tab(text, frequency_table);
     print_frequency_tab(frequency_table);
@@ -110,5 +157,8 @@ int main(void) {
     create_list(&list);
     fill_list(frequency_table, &list);
     print_list(&list);
+    Node *tree = build_tree(&list);
+    printf("\n\t-------Huffman Tree-------\n");
+    print_tree(tree, 0);
     return EXIT_SUCCESS;
 }
