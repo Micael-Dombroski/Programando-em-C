@@ -19,13 +19,18 @@ int getCurrentYear() {
     struct tm *tm = localtime(&t);
     return tm->tm_year + 1900;
 }
-void print(Contact **c, int qtt) {
+void print(Contact *c, int id) {
+    if(c) {
+        printf("\tId:%d\tName: %s\tBirthdate: %2d/%2d/%d\n", id, c -> name, c -> month, c -> day, c -> year);
+    }
+    printf("\t----------------------------------------------------------------\n");
+}
+void print_contact_book(Contact **c, int qtt) {
     printf("\n\tContact Book:\n");
     printf("\t----------------------------------------------------------------\n");
     for (int i = 0; i < qtt; i++) {
-        printf("\tId:%d\tName: %s\tBirthdate: %2d/%2d/%d\n", i+1, c[i]->name, c[i]->month, c[i]->day, c[i]->year);
+        print(c[i], i + 1);
     }
-    printf("\t----------------------------------------------------------------\n");
 }
 int register_contact(Contact **c, int qtt, int size) {
     if(!(size > qtt)) {
@@ -52,7 +57,11 @@ int register_contact(Contact **c, int qtt, int size) {
     return 1;
 }
 void update_contact(Contact **c, int qtt, int size) {
-    print(c, qtt);
+    if(qtt == 0) {
+        printf("\n\tThere is nothing to update\n");
+        return;
+    }
+    print_contact_book(c, qtt);
     int ret = 0, contactID = 0;
     char ch;
     do {
@@ -64,7 +73,25 @@ void update_contact(Contact **c, int qtt, int size) {
     } while(ret != 1 || contactID < 1 || contactID > qtt);
     register_contact(c, contactID - 1, size);
     printf("\n\n");
-    print(c, qtt);
+    print_contact_book(c, qtt);
+}
+Contact* remove_contact(Contact **c, int qtt) {
+    if(qtt == 0) {
+        printf("\n\tThere is nothing to remove\n");
+        return NULL;
+    }
+    print_contact_book(c, qtt);
+    int ret = 0, contactID = 0;
+    do {
+        printf("\nEnter the contact ID you want to remove: ");
+        ret = scanf("%d", &contactID);
+        if(contactID < 1 || contactID > qtt)
+            printf("\n\tInvalid ID!\n");
+        while((getchar()) != '\n');
+    } while(ret != 1 || contactID < 1 || contactID > qtt);
+    Contact *removed = c[contactID - 1];
+    c[contactID - 1] = c[qtt - 1];
+    return removed;
 }
 void save(Contact **c, int qtt, char f[]) {
     FILE *file = fopen(f, "w+");
@@ -72,9 +99,11 @@ void save(Contact **c, int qtt, char f[]) {
         fprintf(file, "%d\n", qtt);
         for (int i = 0; i < qtt; i++)
         {
-            fputs(c[i] ->name, file);
-            fputc('\n', file);
-            fprintf(file, "%d/%d/%d\n", c[i]->month, c[i]->day, c[i]->year);
+            if(c[i]) {
+                fputs(c[i] ->name, file);
+                fputc('\n', file);
+                fprintf(file, "%d/%d/%d\n", c[i]->month, c[i]->day, c[i]->year);
+            }
         }
         fclose(file);
     } else {
@@ -114,11 +143,11 @@ int read_file(Contact **c, int size, char f[]) {
     return qtt;
 }
 int main(void) {
-    Contact *contactBook[50];
+    Contact *contactBook[50], *removed;
     char fileName[] = "contactBook.txt";
     int size = 50, qtt = 0, opt;
     do {
-        printf("\n\t0 - Exit\n\t1 - Register\n\t2 - Update\n\t3- Print\n\t4 - Save\n\t5 - Read File\n");
+        printf("\n\t0 - Exit\n\t1 - Register\n\t2 - Update\n\t3 - Print\n\t4 - Remove\n\t5 - Save\n\t6 - Read File\n");
         printf("\nChoose an option: ");
         scanf("%d", &opt);
         getchar();
@@ -134,12 +163,21 @@ int main(void) {
                 update_contact(contactBook, qtt, size);
                 break;
             case 3:
-                print(contactBook, qtt);
+                print_contact_book(contactBook, qtt);
                 break;
             case 4:
-                save(contactBook, qtt, fileName);
+                removed = remove_contact(contactBook, qtt);
+                if(removed) {
+                    printf("\n\tContact was successfully removed!\n");
+                    print(removed, 1);
+                    qtt--;
+                    free(removed);
+                }
                 break;
             case 5:
+                save(contactBook, qtt, fileName);
+                break;
+            case 6:
                 qtt = read_file(contactBook, size, fileName);
                 printf("Number of contacts: %d\n", qtt);
                 break;

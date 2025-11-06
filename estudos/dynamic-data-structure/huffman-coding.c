@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 /*
     Huffman coding is a lossless data compression technique, 
     no information is lost when compressing and decompressing 
@@ -145,6 +146,65 @@ void print_tree(Node *root, int size) {
     }
 }
 
+//dictionary table
+int tree_height(Node *root) {
+    if(root) {
+        int hLeft = tree_height(root -> left);
+        int hRight = tree_height(root -> right);
+        if(hLeft > hRight) {
+            return hLeft + 1;
+        } else {
+            return hRight + 1;
+        }
+    } else {
+        return -1;
+    }
+}
+
+char** dictionary_allocate(int collumns) {
+    char **dictionary;
+    dictionary = malloc(sizeof(char*) * SIZE);
+    if(dictionary) {
+        for(int i = 0; i < SIZE; i++) {
+            //we use calloc here because it initializes the allocated memory
+            //to zero, preventing the presence of garbage values
+            dictionary[i] = calloc(collumns, sizeof(char));
+            if(!*(dictionary + i)) {
+                printf("\n\tFailed to allocate memory on dictionary_allocate\n");
+                return NULL;
+            }
+        }
+        return dictionary;
+    } else {
+        printf("\n\tFailed to allocate memory on dictionary_allocate\n");
+        return NULL;
+    }
+}
+
+void dicitionary_generate(char ** dictionary, Node *root, char *path, int collumns) {
+    char left[collumns], right[collumns];
+    if(root -> left == NULL && root -> right == NULL) {
+        strcpy(dictionary[root -> c], path);
+    } else {
+        strcpy(left, path);
+        strcpy(right, path);
+
+        strcat(left, "0");
+        strcat(right, "1");
+
+        dicitionary_generate(dictionary, root -> left, left, collumns);
+        dicitionary_generate(dictionary, root -> right, right, collumns);
+    }
+}
+
+void print_dictionary(char **dicitionary) {
+    for(int i = 0; i < SIZE; i++) {
+        if(strlen(dicitionary[i]) > 0) {
+            printf("\t%3d: %c: %s\n", i, i, dicitionary[i]);
+        }
+    }
+}
+
 int main(void) {
     //unsined keyword tells that it can't hold negative values
     unsigned char text[] = {"Vamos aprender a programar"};
@@ -160,5 +220,11 @@ int main(void) {
     Node *tree = build_tree(&list);
     printf("\n\t-------Huffman Tree-------\n");
     print_tree(tree, 0);
+    int collumns = tree_height(tree) + 1;
+    char **dictionary;
+    dictionary = dictionary_allocate(collumns);
+    dicitionary_generate(dictionary, tree, "", collumns);
+    printf("\n\t------Dictionary------\n");
+    print_dictionary(dictionary);
     return EXIT_SUCCESS;
 }
