@@ -205,6 +205,53 @@ void print_dictionary(char **dicitionary) {
     }
 }
 
+//coding text
+int string_size_calc(char **dictionary, unsigned char *text) {
+    int i = 0, size = 0;
+    while(text[i] != '\0') {
+        size = size + strlen(dictionary[text[i]]);
+        i++;
+    }
+    return size + 1;
+}
+
+char* coding(char **dictionary, unsigned char *text) {
+    int size = string_size_calc(dictionary, text);
+    char *code = calloc(size, sizeof(char));
+    int i = 0;
+    while(text[i] != '\0') {
+        strcat(code, dictionary[text[i]]);
+        i++;
+    }
+    return code;
+}
+
+//decoding text
+char* decoding(char *code, Node *root) {
+    char *decode = calloc(strlen(code), sizeof(char));
+    int i = 0;
+    Node *sup = root;
+    while(code[i] != '\0') {
+        if(!sup -> left && !sup -> right) {
+            char str[2];
+            str[0] = sup -> c;
+            str[1] = '\0';
+            strcat(decode, str);
+            sup = root;
+        }
+        if(code[i] == '0') {
+            sup = sup -> left;
+        }
+        if(code[i] == '1') {
+            sup = sup -> right;
+        }
+        i++;
+    }
+    return decode;
+}
+
+
+
 int main(void) {
     //unsined keyword tells that it can't hold negative values
     unsigned char text[] = {"Vamos aprender a programar"};
@@ -226,5 +273,11 @@ int main(void) {
     dicitionary_generate(dictionary, tree, "", collumns);
     printf("\n\t------Dictionary------\n");
     print_dictionary(dictionary);
+    printf("\n\t------Code------\n");
+    char *code = coding(dictionary, text);
+    printf("%s\n", code);
+    printf("\n\t------Decode------\n");
+    char *decode = decoding(code, tree);
+    printf("%s\n", decode);
     return EXIT_SUCCESS;
 }
