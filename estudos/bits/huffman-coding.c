@@ -250,7 +250,78 @@ char* decoding(char *code, Node *root) {
     return decode;
 }
 
+//compacting
+void compact(unsigned char str[]) {
+    FILE *file = fopen("file.wg", "wb");
+    int i = 0, j = 7;
+    unsigned char byte = 0, mask;
+    if(file) {
+        while(str[i] != '\0') {
+            mask = 1;
+            if(str[i] == '1') {
+                mask = mask << j;
+                byte |= mask;
+            }
+            i++;
+            j--;
+            if(j < 0) {
+                fwrite(&byte, sizeof(unsigned char), 1, file);
+                byte = 0;
+                j = 7;
+            }
+        }
+        if(j != 7) {
+            fwrite(&byte, sizeof(unsigned char), 1, file);
+        }
+        fclose(file);
+    } else {
+        printf("\n\tFailed to open/creat the file on compact\n");
+    }
+}
 
+void print_compact_file() {
+    FILE *file = fopen("file.wg", "rb");
+    unsigned char byte;
+    if(file) {
+        while(fread(&byte, sizeof(unsigned char), 1, file)) {
+            printf("%c", byte);
+        }
+        printf("\n");
+        fclose(file);
+    } else {
+        printf("\n\tFailed to open the file on compact\n");
+    }
+}
+
+unsigned int is_bit_one(unsigned char byte, int i) {
+    unsigned char mask = (1 << i);
+    return byte & mask;
+}
+
+void descompact(Node *root) {
+    FILE *file = fopen("file.wg", "rb");
+    Node *sup = root;
+    int i = 0;
+    unsigned char byte;
+    if(file) {
+        while(fread(&byte, sizeof(unsigned char), 1, file)) {
+            for(i = 7; i >= 0; i--) {
+                if(is_bit_one(byte, i)) {
+                    sup = sup -> right;
+                } else {
+                    sup = sup -> left;
+                }
+                if(!sup -> left && !sup -> right) {
+                    printf("%c", sup -> c);
+                    sup = root;
+                }
+            }
+        }
+        fclose(file);
+    } else {
+        printf("\n\tFailed to open the file on compact\n");
+    }
+}
 
 int main(void) {
     //unsined keyword tells that it can't hold negative values
@@ -279,5 +350,10 @@ int main(void) {
     printf("\n\t------Decode------\n");
     char *decode = decoding(code, tree);
     printf("%s\n", decode);
+    printf("\n\t------Compact------\n");
+    compact((unsigned char*)code);
+    print_compact_file();
+    printf("\n\t------Descompact------\n");
+    descompact(tree);
     return EXIT_SUCCESS;
 }
