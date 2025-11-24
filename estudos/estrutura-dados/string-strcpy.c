@@ -4,9 +4,10 @@
 int main(void) {
     char word1[20] = "apple";
     char word2[20] = "driver";
-    printf("\nResult: %s\n", strcmp(word1, word2) == 0 ? "equals" : "differents");
+
+    printf("\n%s\t%s\nResult: %s\n", word1, word2, strcmp(word1, word2) == 0 ? "equals" : "differents");
     strcpy(word1, word2);
-    printf("\nResult: %s\n", strcmp(word1, word2) == 0 ? "equals" : "differents");
+    printf("\n%s\t%s\nResult: %s\n", word1, word2, strcmp(word1, word2) == 0 ? "equals" : "differents");
     /*
         You can't just repass the value of a string to another like a = b
         because string don't contain a single value (array of chars).
